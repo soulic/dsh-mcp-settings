@@ -1,0 +1,75 @@
+{
+  "name": "dsh-mcp-settings",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DSH plugin: configure Model Context Protocol servers from a standalone Web UI page by reading and writing the profile's cordis.patch.yml",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "lib/types/**/*.d.ts",
+    "README.md"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "link-deps": "node scripts/link-deps.mjs",
+    "link-scope": "node scripts/link-checkout-scope.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json && tsdown",
+    "watch": "tsdown --watch",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/cordis-plugin-include": "*",
+    "@deepseek-ai/dsh-app-boot": "*",
+    "@deepseek-ai/dsh-atomic-write": "*",
+    "@deepseek-ai/dsh-client-locale": "*",
+    "@deepseek-ai/dsh-client-store": "*",
+    "@deepseek-ai/dsh-client-ui-layout": "*",
+    "@deepseek-ai/dsh-client-ui-primitives": "*",
+    "@deepseek-ai/dsh-client-ui-settings": "*",
+    "@deepseek-ai/dsh-client-ui-sidebar": "*",
+    "@deepseek-ai/dsh-client-ui-slots": "*",
+    "@deepseek-ai/dsh-settings": "*",
+    "@deepseek-ai/dsh-typert-protocol": "*",
+    "@deepseek-ai/schemastery": "*",
+    "react": "^18.2.0",
+    "@deepseek-ai/cordis-plugin-loader": "*",
+    "@deepseek-ai/dsh-util-values": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "~18.3.1",
+    "react": "^18.2.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11",
+    "yaml": "^2.5.0",
+    "@deepseek-ai/schemastery": "*"
+  }
+}
