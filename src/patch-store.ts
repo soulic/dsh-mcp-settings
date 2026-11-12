@@ -140,7 +140,16 @@ function projectRow(id: string, row: YAMLMap): McpServer {
   const transport = mapping['transport'] === 'streamable-http' ? 'streamable-http' : 'stdio'
   const declaredName = mapping['serverName']
   const serverName = typeof declaredName === 'string' ? declaredName : id
-  const server: McpServer = { id, serverName, transport, raw, origin: isManagedId(id) ? 'managed' : 'external' }
+  // `disabled` is a Loader-row concern, not an MCP-client config field. Reading
+  // it here keeps a row's enabled state in the same staged list as its fields.
+  const server: McpServer = {
+    id,
+    serverName,
+    transport,
+    raw,
+    enabled: row.get('disabled') !== true,
+    origin: isManagedId(id) ? 'managed' : 'external',
+  }
 
   if (transport === 'stdio') {
     if (typeof mapping['command'] === 'string') server.command = mapping['command']
@@ -397,7 +406,9 @@ function serverToRow(server: McpServer): Record<string, unknown> {
   }
   if (server.toolCallTimeoutMs !== undefined) config['toolCallTimeoutMs'] = server.toolCallTimeoutMs
   if (server.failOnStartupError !== undefined) config['failOnStartupError'] = server.failOnStartupError
-  return { id: server.id, name: MCP_CLIENT_NAME, config }
+  const row: Record<string, unknown> = { id: server.id, name: MCP_CLIENT_NAME, config }
+  if (server.enabled === false) row['disabled'] = true
+  return row
 }
 
 /** The row a rebuild should keep formatting from, when the same id already exists. */
@@ -423,6 +434,16 @@ function rowNode(document: PatchDocument, server: McpServer, source: MergeSource
   if (source !== undefined && scalarOf(source.row.get('name')) === MCP_CLIENT_NAME) {
     const existingName = source.row.get('name', true)
     if (existingName !== undefined) row['name'] = existingName
+  }
+  // `disabled` is row-level Loader configuration, next to `config` rather than
+  // inside it. Keep an existing `false` (or an expression the page cannot
+  // evaluate) when the server is enabled; only a disabled server needs the key.
+  if (server.enabled === false) {
+    const existingDisabled = source?.row.get('disabled', true)
+    row['disabled'] = sameData(existingDisabled, true) ? existingDisabled : true
+  } else if (source !== undefined) {
+    const existingDisabled = source.row.get('disabled', true)
+    if (existingDisabled !== undefined && !sameData(existingDisabled, true)) row['disabled'] = existingDisabled
   }
   return document.createNode(stampExpressions(row) as Record<string, unknown>) as YamlNode
 }

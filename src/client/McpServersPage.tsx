@@ -52,6 +52,35 @@ function Field(props: {
   )
 }
 
+/** An accessible on/off switch for one server's loader row. */
+function Switch(props: {
+  id: string
+  enabled: boolean
+  disabled: boolean
+  label: string
+  stateLabel: string
+  onChange: (enabled: boolean) => void
+}) {
+  return (
+    <label className="mcp-switch" htmlFor={props.id} title={props.label}>
+      <input
+        id={props.id}
+        type="checkbox"
+        role="switch"
+        checked={props.enabled}
+        disabled={props.disabled}
+        aria-label={props.label}
+        aria-checked={props.enabled}
+        onChange={(event) => { props.onChange(event.target.checked) }}
+      />
+      <span className="mcp-switch-track" aria-hidden="true">
+        <span className="mcp-switch-thumb" />
+      </span>
+      <span className="mcp-switch-state">{props.stateLabel}</span>
+    </label>
+  )
+}
+
 /** A list of strings edited as one item per line. */
 function Lines(props: {
   id: string
@@ -337,8 +366,9 @@ export function McpServersPage(props: McpServersProps) {
             {rows.map((row, index) => {
               const open = state.editing === index
               const external = row.origin === 'external'
+              const enabled = row.enabled !== false
               return (
-                <li className="mcp-card" key={`${row.id}-${String(index)}`}>
+                <li className={enabled ? 'mcp-card' : 'mcp-card mcp-card-disabled'} key={`${row.id}-${String(index)}`}>
                   <div className="mcp-card-head">
                     <div className="mcp-card-title">
                       <span className="mcp-mono">{row.serverName === '' ? t('newServer') : row.serverName}</span>
@@ -346,6 +376,14 @@ export function McpServersPage(props: McpServersProps) {
                       {external ? <span className="mcp-tag mcp-tag-quiet">{t('externalTag')}</span> : null}
                     </div>
                     <div className="mcp-card-actions">
+                      <Switch
+                        id={`mcp-${String(index)}-enabled`}
+                        enabled={enabled}
+                        disabled={state.saving}
+                        label={enabled ? t('disableTools') : t('enableTools')}
+                        stateLabel={enabled ? t('enabled') : t('disabled')}
+                        onChange={(enabled) => { props.setEnabled(index, enabled) }}
+                      />
                       <button
                         type="button" className="mcp-button"
                         disabled={external || state.saving}

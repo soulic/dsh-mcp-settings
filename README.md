@@ -18,6 +18,10 @@ and nothing to convert — a file you maintain by hand keeps working, comments a
 - **Add by pasting YAML.** Add server opens a text box: paste the same
   `@deepseek-ai/dsh-mcp-client` row you would write by hand, and the page stages
   it. Removing a server deletes the row the list no longer names.
+- **Switch servers on and off.** Every row has an enable switch. Turning it off
+  keeps the server's configuration in the file but writes the Loader's row-level
+  `disabled: true`, so none of that server's tools are offered to the model until
+  it is switched back on.
 - **No restart.** The profile already watches the file it booted from, so a new
   server's tools appear once its row lands, and a removed one's tools retire.
 - **Your file, respected.** Comments, blank lines, key order and unrelated plugin
@@ -113,6 +117,11 @@ before saving.
 
 **Remove** deletes a row, and asks once to confirm.
 
+The switch at the right of each row enables or disables that server. The setting
+is staged like any other edit; click **Save** to write it to the file. A disabled
+row remains visible and editable, so turning it back on does not require retyping
+its configuration.
+
 ### Editing fields
 
 The field editor has, per transport:
@@ -162,6 +171,8 @@ already had. In practice:
   that was removed, stay.
 - `!!js` tags stay expressions.
 - Config keys the editor does not expose are kept, including their `!!js` leaves.
+- The loader row's `disabled` flag follows the row switch without moving into the
+  MCP client's `config`.
 - Rows for other plugins are untouched.
 - A save that changes nothing writes nothing at all — the file's bytes are
   compared before it is replaced.

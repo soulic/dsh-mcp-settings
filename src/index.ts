@@ -87,6 +87,12 @@ export interface McpServerInput {
   /** Whether a failed initial connection rejects activation. */
   failOnStartupError?: boolean
   /**
+   * Whether the server is enabled. Disabled servers keep their configuration in
+   * the patch file but their loader row is not started, so their tools are not
+   * offered to the model.
+   */
+  enabled?: boolean
+  /**
    * Convenience for programmatic callers: a reconnect policy, stored in
    * {@link extra} under `reconnect` like any other key the page does not expose.
    */
@@ -185,7 +191,14 @@ function defaultHome(): string {
 export function normalize(input: McpServerInput, taken: ReadonlySet<string>): McpServer {
   const serverName = input.serverName.trim()
   const id = input.id?.trim() || deriveId(serverName, taken)
-  const server: McpServer = { id, serverName, transport: input.transport, raw: input.raw ?? [], origin: 'managed' }
+  const server: McpServer = {
+    id,
+    serverName,
+    transport: input.transport,
+    raw: input.raw ?? [],
+    enabled: input.enabled ?? true,
+    origin: 'managed',
+  }
   if (input.transport === 'stdio') {
     if (input.command !== undefined && input.command !== '') server.command = input.command
     if (input.args !== undefined && input.args.length > 0) server.args = [...input.args]
@@ -294,7 +307,7 @@ export function listSignature(servers: readonly McpServer[]): string {
   return JSON.stringify(servers.map(server => [
     server.id, server.serverName, server.transport, server.command, server.args, server.cwd,
     server.env, server.url, server.headers, server.toolCallTimeoutMs, server.failOnStartupError,
-    server.raw, server.extra,
+    server.enabled ?? true, server.raw, server.extra,
   ]))
 }
 

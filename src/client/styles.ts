@@ -30,9 +30,26 @@ export const STYLES = `
 .mcp-card { padding: 12px 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;
   border: 1px solid var(--dsh-border, rgba(127, 127, 127, 0.24));
   background: var(--dsh-surface, transparent); }
+.mcp-card-disabled { background: var(--dsh-surface-sunken, rgba(127, 127, 127, 0.05)); }
+.mcp-card-disabled .mcp-card-title, .mcp-card-disabled .mcp-summary { opacity: 0.65; }
 .mcp-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .mcp-card-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.mcp-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.mcp-card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.mcp-switch { display: inline-flex; align-items: center; gap: 6px; margin-right: 4px;
+  font-size: 12px; color: var(--dsh-text-secondary, #8b8b8b); cursor: pointer;
+  user-select: none; white-space: nowrap; }
+.mcp-switch input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.mcp-switch-track { position: relative; width: 30px; height: 18px; flex-shrink: 0;
+  border-radius: 999px; background: var(--dsh-border, rgba(127, 127, 127, 0.5));
+  transition: background 120ms ease; }
+.mcp-switch-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+  border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 120ms ease; }
+.mcp-switch input:checked + .mcp-switch-track { background: var(--dsh-accent, #3b6fe0); }
+.mcp-switch input:checked + .mcp-switch-track .mcp-switch-thumb { transform: translateX(12px); }
+.mcp-switch input:focus-visible + .mcp-switch-track { outline: 2px solid var(--dsh-focus, #4c8dff); outline-offset: 2px; }
+.mcp-switch input:disabled + .mcp-switch-track { opacity: 0.5; cursor: not-allowed; }
 .mcp-tag { padding: 1px 6px; border-radius: 999px; font-size: 11px; white-space: nowrap;
   background: var(--dsh-surface-sunken, rgba(127, 127, 127, 0.14)); }
 .mcp-tag-quiet { opacity: 0.7; }

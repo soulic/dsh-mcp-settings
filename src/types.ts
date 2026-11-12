@@ -55,6 +55,15 @@ export interface McpServer {
    */
   extra?: Record<string, unknown>
   /**
+   * Whether the loader row is enabled. Disabling a row keeps its configuration
+   * in the patch file but stops the MCP client from starting it, so all of that
+   * server's tools disappear from the model until it is enabled again.
+   *
+   * Absent means enabled. In YAML this is persisted as the Loader's row-level
+   * `disabled: true`, not as an MCP-client config key.
+   */
+  enabled?: boolean
+  /**
    * Who declared this row. `managed` rows were created by this plugin and may
    * be rewritten or deleted from here; `external` rows were authored by hand
    * and are shown read-only, so a hand-written row is never clobbered.

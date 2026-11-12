@@ -232,6 +232,7 @@ function draftOf(node: YAMLMap, taken: Set<string>): { draft: ServerDraft } | { 
       headers: pairsOf(config['headers']),
       toolCallTimeoutMs: timeout,
       failOnStartupError: config['failOnStartupError'] === true,
+      enabled: node.get('disabled') !== true,
       raw,
       extra,
       origin: 'managed',

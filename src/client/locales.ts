@@ -17,6 +17,7 @@
 export type McpServersLocaleKey =
   | 'title' | 'intro' | 'unavailable' | 'watchOff' | 'empty' | 'newServer'
   | 'externalTag' | 'externalHint'
+  | 'enabled' | 'disabled' | 'enableTools' | 'disableTools'
   | 'transport' | 'transportStdio' | 'transportHttp'
   | 'serverName' | 'serverNameHint' | 'entryId' | 'entryIdHint'
   | 'command' | 'commandHint' | 'args' | 'argsHint' | 'cwd' | 'cwdHint' | 'env' | 'envHint'
@@ -39,7 +40,11 @@ export const zh: Record<McpServersLocaleKey, string> = {
   empty: '还没有配置任何 MCP 服务器。',
   newServer: '新服务器',
   externalTag: '手工行',
-  externalHint: '这一行由你手工写在补丁文件里。为避免覆盖你的改动，本页只展示、不修改它；若要接管，请用相同的条目 id 新建一个同名服务器。',
+  externalHint: '这一行由你手工写在补丁文件里。为避免覆盖你的改动，本页只展示、不修改它的字段；右上角的开关仍可启用或禁用这个服务器。',
+  enabled: '已启用',
+  disabled: '已禁用',
+  enableTools: '启用这个服务器的全部 MCP 工具',
+  disableTools: '禁用这个服务器的全部 MCP 工具',
   transport: '传输方式',
   transportStdio: 'stdio（本地进程）',
   transportHttp: 'Streamable HTTP',
@@ -103,7 +108,11 @@ export const en: Record<McpServersLocaleKey, string> = {
   empty: 'No MCP server is configured yet.',
   newServer: 'New server',
   externalTag: 'hand-written',
-  externalHint: 'This row was written by hand in the patch file. To avoid overwriting your work, this page only shows it; add a server with the same entry id to take it over.',
+  externalHint: 'This row was written by hand in the patch file. To avoid overwriting your work, this page shows its fields read-only; the switch still enables or disables the server.',
+  enabled: 'Enabled',
+  disabled: 'Disabled',
+  enableTools: 'Enable all MCP tools from this server',
+  disableTools: 'Disable all MCP tools from this server',
   transport: 'Transport',
   transportStdio: 'stdio (local process)',
   transportHttp: 'Streamable HTTP',

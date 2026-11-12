@@ -60,6 +60,8 @@ export interface ServerDraft {
   toolCallTimeoutMs: string
   /** Fail activation when the first connection fails. */
   failOnStartupError: boolean
+  /** Whether the server and its tools are active. */
+  enabled: boolean
   /** `!!js` leaves, as a path plus its expression source. */
   raw: Array<[string[], string]>
   /** Config keys the editor has no control for, carried through a save verbatim. */
@@ -106,6 +108,10 @@ export interface McpServersFace {
   remove: (index: number) => void
   /** Replace the row at `index`. */
   replace: (index: number, row: ServerDraft) => void
+  /** Stage a row's enabled state; the change is persisted by {@link save}. */
+  setEnabled: (index: number, enabled: boolean) => void
+  /** Flip a row's enabled state, or set it when `enabled` is supplied. */
+  toggleEnabled: (index: number, enabled?: boolean) => void
   /** Begin editing the row at `index`, or stop when it is already open. */
   toggleEdit: (index: number) => void
   /** Write the staged list to the patch file. */
@@ -149,6 +155,8 @@ interface StagedServer {
   headers?: Record<string, string>
   toolCallTimeoutMs?: number
   failOnStartupError?: boolean
+  /** Whether the server is enabled; absent means enabled. */
+  enabled?: boolean
   raw?: Array<[string[], string]>
   extra?: Record<string, unknown>
 }
@@ -167,6 +175,7 @@ function toDraft(server: StagedServer & { origin?: 'managed' | 'external' }): Se
     headers: Object.entries(server.headers ?? {}),
     toolCallTimeoutMs: server.toolCallTimeoutMs === undefined ? '' : String(server.toolCallTimeoutMs),
     failOnStartupError: server.failOnStartupError ?? false,
+    enabled: server.enabled !== false,
     raw: (server.raw ?? []).map(([path, source]) => [[...path], source]),
     extra: { ...(server.extra ?? {}) },
     origin: server.origin ?? 'managed',
@@ -195,6 +204,7 @@ function toStaged(draft: ServerDraft): StagedServer {
   const timeout = draft.toolCallTimeoutMs.trim()
   if (timeout !== '' && Number.isFinite(Number(timeout))) server.toolCallTimeoutMs = Number(timeout)
   if (draft.failOnStartupError) server.failOnStartupError = true
+  server.enabled = draft.enabled
   if (draft.raw.length > 0) server.raw = draft.raw.map(([path, source]) => [[...path], source])
   if (Object.keys(draft.extra).length > 0) server.extra = { ...draft.extra }
   return server
@@ -323,6 +333,12 @@ export class McpServersController {
         this.rows = this.rows.map((existing, at) => at === index ? row : existing)
         this.publish()
       },
+      setEnabled: (index, enabled) => { this.setEnabledAt(index, enabled) },
+      toggleEnabled: (index, enabled) => {
+        const row = this.rows[index]
+        if (row === undefined) return
+        this.setEnabledAt(index, enabled ?? !row.enabled)
+      },
       toggleEdit: (index) => {
         this.editing = this.editing === index ? -1 : index
         this.publish()
@@ -334,6 +350,12 @@ export class McpServersController {
         this.publish()
       },
     }
+  }
+
+  /** Replace one row's enabled state without duplicating the list mapping. */
+  private setEnabledAt(index: number, enabled: boolean): void {
+    this.rows = this.rows.map((existing, at) => at === index ? { ...existing, enabled } : existing)
+    this.publish()
   }
 
   /** Write the staged list, then re-read whatever the Host accepted. */
