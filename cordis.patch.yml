@@ -1,0 +1,12 @@
+# The layer this package contributes when a profile lists it as a bundle.
+#
+# Rows address the package by name so Node resolution finds the installed
+# code, never by a relative source path. The entry id is the same one the
+# settings namespace is published under, so the Web page finds its form.
+#
+# `servers` and `expressions` are deliberately absent: they belong to the
+# user's profile patch, and the page stages its list there on first save.
+# Boot publishes the patch file's rows into the form instead.
+- insert:
+    - id: mcp-settings
+      name: 'dsh-mcp-settings'

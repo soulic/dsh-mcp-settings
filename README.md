@@ -32,6 +32,29 @@ and nothing to convert — a file you maintain by hand keeps working, comments a
 
 ## Install
 
+### From the registry
+
+`dsh plugin` installs it into a profile as a bundle:
+
+```sh
+dsh plugin --profile <name> add dsh-mcp-settings
+```
+
+That appends the package to the profile's `dsh.profile.bundles` and activates
+this package's [`cordis.patch.yml`](cordis.patch.yml), which inserts the
+`mcp-settings` row addressed by package name. A tarball needs no registry at
+all:
+
+```sh
+pnpm pack                                 # -> dsh-mcp-settings-0.1.0.tgz
+dsh plugin --profile <name> add ./dsh-mcp-settings-0.1.0.tgz
+```
+
+Installing from a git host works too, but a git install fetches sources and runs
+no build, so a tarball or a published package ships the prebuilt `lib/`.
+
+### From a checkout
+
 The plugin is built and loaded like any other profile plugin.
 
 ```sh
@@ -61,7 +84,7 @@ An installed copy is addressed by package name instead:
 
 ```yaml
     - id: mcp-settings
-      name: dsh-mcp-settings
+      name: 'dsh-mcp-settings'
 ```
 
 Restart once so the new row is picked up; the **MCP servers** row then appears in

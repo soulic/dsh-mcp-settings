@@ -1,8 +1,17 @@
 {
   "name": "dsh-mcp-settings",
   "version": "0.1.0",
-  "private": true,
   "description": "DSH plugin: configure Model Context Protocol servers from a standalone Web UI page by reading and writing the profile's cordis.patch.yml",
+  "author": "soulic",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "mcp",
+    "model-context-protocol",
+    "settings"
+  ],
+  "license": "Apache-2.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -17,7 +26,17 @@
     },
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.1.5 <0.2.0"
+  },
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "inject": [
         "@deepseek-ai/dsh-client-locale",
@@ -32,13 +51,15 @@
     "lib/index.js",
     "lib/client.js",
     "lib/types/**/*.d.ts",
-    "README.md"
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
   ],
-  "license": "MIT",
   "scripts": {
     "link-deps": "node scripts/link-deps.mjs",
     "link-scope": "node scripts/link-checkout-scope.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build",
     "build": "tsc -p tsconfig.build.json && tsdown",
     "watch": "tsdown --watch",
     "test": "vitest run"
