@@ -359,4 +359,4 @@ node scripts/link-checkout-scope.mjs       # every workspace package, for typech
 
 ## License
 
-MIT
+Apache-2.0
