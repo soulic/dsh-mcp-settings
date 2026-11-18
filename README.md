@@ -353,6 +353,17 @@ node scripts/link-checkout-scope.mjs       # every workspace package, for typech
 - **The plugin row must be editable from the profile patch.** The page persists its
   list as that row's configuration, so a row supplied by the home patch or a
   `--patch` overlay can be listed but not saved.
+- **The profile patch has to create the row, not just configure it.** The page
+  saves its list as an id-targeted `mcp-settings` entry, which only *overrides* a
+  row some layer already wrote. If that entry is the only `mcp-settings` row in
+  the profile patch, the patch matches nothing, the loaders warn and skip it, and
+  the plugin disappears from the sidebar with no error in the UI. Keep the
+  `- insert:` row (or a bundle install) ahead of the config entry in the file.
+- **`engines.dsh` has to admit the running harness.** A row whose range the
+  runtime does not satisfy is denied by the compatibility preflight: it stays
+  listed in **Plugins** as off and never mounts, so `MCP servers` never appears.
+  Widen the range, then let the profile reload (or restart) so the row is judged
+  again.
 - **The page is written against this harness's client page services** — the
   `ctx.configForms` / `main` / `sidebar.panellist` surfaces it was built with. The
   entry id it edits is discovered from the settings describe answer, not assumed.
